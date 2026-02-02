@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.unused;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -62,9 +62,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-
-@TeleOp(name="WHY DON'T THE WHEELS GO ROUND AND ROUND", group="Linear OpMode")
-public class WhyDontTheWheelsWork extends LinearOpMode {
+@TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
+@Disabled
+public class BasicOmniOpMode_Linear extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -78,10 +78,10 @@ public class WhyDontTheWheelsWork extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "lf");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "lr");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "rf");
-        backRightDrive = hardwareMap.get(DcMotor.class, "rr");
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");
+        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -144,10 +144,12 @@ public class WhyDontTheWheelsWork extends LinearOpMode {
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
-            frontLeftPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad | front left :)
-            backLeftPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad | front right :(
-            frontRightPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad | back left :(
-            backRightPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad | back right :)
+            /*
+            frontLeftPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
+            backLeftPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
+            frontRightPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
+            backRightPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+            */
 
             // Send calculated power to wheels
             frontLeftDrive.setPower(frontLeftPower);
