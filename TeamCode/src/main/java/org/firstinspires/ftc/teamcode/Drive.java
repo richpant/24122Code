@@ -54,20 +54,34 @@ public class Drive extends LinearOpMode {
     public void runOpMode() {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "lf");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "lr");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "rf");
+        backRightDrive = hardwareMap.get(DcMotor.class, "rr");
         frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.FORWARD);
 
+        flywheel1 = hardwareMap.get(DcMotorEx.class, "fOne");
+        flywheel2 = hardwareMap.get(DcMotorEx.class, "fTwo");
         flywheel1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         flywheel2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         flywheel1.setDirection(DcMotor.Direction.REVERSE);
 
+        intake = hardwareMap.get(DcMotorEx.class, "in");
+        intakeServoL = hardwareMap.get(Servo.class, "inl");
+        intakeServoR = hardwareMap.get(Servo.class, "inr");
         intakeServoL.setPosition(0.5);
         intakeServoR.setPosition(0.5);
 
+        spin = hardwareMap.get(Servo.class, "spin");
+
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");;
         limelight.pipelineSwitch(0);
         limelight.start();
+
+        ledStrip = hardwareMap.get(GoBildaPrismDriver.class, "led_strip");
 
         telemetry.addData("Status", "Initialized");
 
@@ -279,26 +293,26 @@ public class Drive extends LinearOpMode {
 
     // Declare OpMode Members
     private final ElapsedTime runtime = new ElapsedTime();
-    private final DcMotor frontLeftDrive = hardwareMap.get(DcMotor.class, "lf");
-    private final DcMotor backLeftDrive = hardwareMap.get(DcMotor.class, "lr");
-    private final DcMotor frontRightDrive = hardwareMap.get(DcMotor.class, "rf");
-    private final DcMotor backRightDrive = hardwareMap.get(DcMotor.class, "rr");
+    private DcMotor frontLeftDrive;
+    private DcMotor backLeftDrive;
+    private DcMotor frontRightDrive;
+    private DcMotor backRightDrive;
 
-    private final DcMotorEx flywheel1 = hardwareMap.get(DcMotorEx.class, "fOne");
-    private final DcMotorEx flywheel2 = hardwareMap.get(DcMotorEx.class, "fTwo");
+    private DcMotorEx flywheel1;
+    private DcMotorEx flywheel2;
 
-    private final DcMotorEx intake = hardwareMap.get(DcMotorEx.class, "in");
-    private final Servo intakeServoL = hardwareMap.get(Servo.class, "inl");
-    private final Servo intakeServoR = hardwareMap.get(Servo.class, "inr");
+    private DcMotorEx intake;
+    private Servo intakeServoL;
+    private Servo intakeServoR;
 
-    private final Servo spin = hardwareMap.get(Servo.class, "spin");;
+    private Servo spin;
     private int spinState = 0;
 
-    private final Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");;
+    private Limelight3A limelight;
     private final ElapsedTime limelightTimer = new ElapsedTime();
     private double distance = 60; // default value if limelight is completely busted
 
-    private final GoBildaPrismDriver ledStrip = hardwareMap.get(GoBildaPrismDriver.class, "led_strip");;
+    private GoBildaPrismDriver ledStrip;
     PrismAnimations.Solid blueSolid = new PrismAnimations.Solid(Color.BLUE);
     PrismAnimations.Solid magentaSolid = new PrismAnimations.Solid(Color.MAGENTA);
     private PrismAnimations.Solid ledColor = blueSolid;
