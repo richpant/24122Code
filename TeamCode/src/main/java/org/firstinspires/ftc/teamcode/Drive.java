@@ -154,8 +154,8 @@ public class Drive extends LinearOpMode {
 
         // Shooting
         if ((gamepad1.dpadRightWasPressed() && isSP) || (gamepad2.dpadRightWasPressed() && !isSP)) {
-            intakeServoL.setPosition(0.6);
-            intakeServoR.setPosition(0.6);
+            intakeServoL.setPosition(intakeShootPos);
+            intakeServoR.setPosition(intakeShootPos);
         }
 
         // Neutral
@@ -170,16 +170,16 @@ public class Drive extends LinearOpMode {
             telemetry.addData("Distance", distance);
             if (!isVisible) {
                 if (ledColor == magentaSolid) {
-                    ledStrip.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, blueSolid);
+                   ledStrip.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, blueSolid);
                     ledColor = blueSolid;
                 }
             } else {
                 if (ledColor == blueSolid) {
-                    ledStrip.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, magentaSolid);
+                   ledStrip.insertAndUpdateAnimation(GoBildaPrismDriver.LayerHeight.LAYER_0, magentaSolid);
                     ledColor = magentaSolid;
                 }
             }
-            vel = (int) (7.51591 * distance + 753.21775);
+            vel = (int) (7.18563 * distance + 810.62874);
 
             flywheel1.setVelocityPIDFCoefficients(p, i, d, f);
             flywheel2.setVelocityPIDFCoefficients(p, i, d, f);
@@ -267,8 +267,6 @@ public class Drive extends LinearOpMode {
             if (target != null) {
                 double x = (target.getCameraPoseTargetSpace().getPosition().x / DistanceUnit.mPerInch) + 8;
                 double z = (target.getCameraPoseTargetSpace().getPosition().z / DistanceUnit.mPerInch) + 8;
-               // double x = target.getCameraPoseTargetSpace().getPosition().x;
-                //double z = target.getCameraPoseTargetSpace().getPosition().z;
                 double dist = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
                 telemetry.addData("x, z, distance", x + " " + z + " " + dist);
 
@@ -288,7 +286,8 @@ public class Drive extends LinearOpMode {
     public static int d = 15; // 15
     public static int f = 0;
     public static int vel = 1350; // 2100 for far; 1350 for near
-    public static double intakeIntakePos = 0.35;
+    public static float intakeIntakePos = 0.35F;
+    public static float intakeShootPos = 0.576F;
     public static double intakePower = 1;
 
     // Declare OpMode Members
