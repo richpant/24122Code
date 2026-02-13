@@ -1,5 +1,6 @@
 
 package org.firstinspires.ftc.teamcode.auto;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.bylazar.configurables.annotations.Configurable;
@@ -19,13 +20,14 @@ public class RedNear extends OpMode {
     public Follower follower; // Pedro Pathing follower instance
     private int pathState; // Current autonomous path state (state machine)
     private Paths paths; // Paths defined in the Paths class
+    private final Timer pathTimer = new Timer();
 
     @Override
     public void init() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(new Pose(126.32558139534879, 120.80293757649942, Math.toRadians(-144)));
+        follower.setStartingPose(new Pose(116.60416156670745, 132.07894736842104, Math.toRadians(37)));
 
         paths = new Paths(follower); // Build paths
 
@@ -47,78 +49,111 @@ public class RedNear extends OpMode {
     }
 
     public static class Paths {
-        public PathChain Path1;
-        public PathChain Path2;
-        public PathChain Path3;
+        public PathChain ScorePreload;
+        public PathChain GrabBalls1;
+        public PathChain ScoringPos;
+        public PathChain ScoreBalls1;
+        public PathChain MoveOut;
 
         public Paths(Follower follower) {
-            Path1 = follower.pathBuilder().addPath(
+            ScorePreload = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(126.326, 120.803),
+                                    new Pose(116.604, 132.079),
 
-                                    new Pose(88.078, 93.812)
+                                    new Pose(84.761, 83.663)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(-144), Math.toRadians(-136))
+                    ).setLinearHeadingInterpolation(Math.toRadians(-143), Math.toRadians(-136))
 
                     .build();
 
-            Path2 = follower.pathBuilder().addPath(
+            GrabBalls1 = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(88.078, 93.812),
+                                    new Pose(84.761, 83.663),
 
-                                    new Pose(97.343, 83.219)
+                                    new Pose(122.293, 83.414)
                             )
                     ).setTangentHeadingInterpolation()
 
                     .build();
 
-            Path3 = follower.pathBuilder().addPath(
+            ScoringPos = follower.pathBuilder().addPath(
                             new BezierLine(
-                                    new Pose(97.343, 83.219),
+                                    new Pose(122.293, 83.414),
 
-                                    new Pose(131.552, 83.321)
+                                    new Pose(84.621, 83.632)
                             )
                     ).setTangentHeadingInterpolation()
+                    .setReversed()
+                    .build();
+
+            ScoreBalls1 = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(84.621, 83.632),
+
+                                    new Pose(84.779, 83.358)
+                            )
+                    ).setConstantHeadingInterpolation(Math.toRadians(-132))
+
+                    .build();
+
+            MoveOut = follower.pathBuilder().addPath(
+                            new BezierLine(
+                                    new Pose(84.779, 83.358),
+
+                                    new Pose(95.661, 73.463)
+                            )
+                    ).setLinearHeadingInterpolation(Math.toRadians(-132), Math.toRadians(-132))
 
                     .build();
         }
     }
 
 
-
-
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(paths.Path1);
+                follower.followPath(paths.ScorePreload);
                 setPathState(1);
                 break;
             case 1:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
-                if(!follower.isBusy()) {
+                if(pathTimer.getElapsedTimeSeconds() >= 3) {
                     /* Score Preload */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
-                    follower.followPath(paths.Path2,true);
+                    follower.followPath(paths.GrabBalls1,true);
                     setPathState(2);
                 }
                 break;
             case 2:
-                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
                 if(!follower.isBusy()) {
-                    /* Grab Sample */
-
-                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
-                    follower.followPath(paths.Path3,true);
-                    setPathState(-1);
+                    /* Grab Balls 1 */
+                    follower.followPath(paths.ScoringPos,true);
+                    setPathState(3);
                 }
                 break;
+            case 3:
+                if(!follower.isBusy()) {
+                    /* Move to Scoring Position */
+                    follower.followPath(paths.ScoreBalls1,true);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                if(pathTimer.getElapsedTimeSeconds() >= 3) {
+                    /* Score Balls 1 */
+                    follower.followPath(paths.MoveOut);
+                    setPathState(5);
+                }
+                break;
+            case 5:
+                if (!follower.isBusy()) {
+                    setPathState(-1);
+                }
         }
     }
 
     /** These change the states of the paths and actions. It will also reset the timers of the individual switches **/
     public void setPathState(int pState) {
         pathState = pState;
+        pathTimer.resetTimer();
     }
 }
     

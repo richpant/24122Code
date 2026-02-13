@@ -90,7 +90,6 @@ public class Drive extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        limelightTimer.reset();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -179,7 +178,10 @@ public class Drive extends LinearOpMode {
                     ledColor = magentaSolid;
                 }
             }
-            vel = (int) (7.18563 * distance + 810.62874);
+
+            if (dynamicVel) {
+                vel = (int) (7.18563 * distance + 810.62874);
+            }
 
             flywheel1.setVelocityPIDFCoefficients(p, i, d, f);
             flywheel2.setVelocityPIDFCoefficients(p, i, d, f);
@@ -250,12 +252,11 @@ public class Drive extends LinearOpMode {
         backRightDrive.setPower(backRightPower);
 
         // Show the elapsed game time and wheel power.
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Status", "Run Time: " + runtime);
         telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
         telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
     }
     private boolean updateDistance() {
-        limelightTimer.reset();
         LLStatus status = limelight.getStatus();
         telemetry.addData("Pipeline", "Index: %d, Type: %s",
                 status.getPipelineIndex(), status.getPipelineType());
@@ -265,8 +266,8 @@ public class Drive extends LinearOpMode {
             LLResultTypes.FiducialResult target = result.getFiducialResults().get(0);
 
             if (target != null) {
-                double x = (target.getCameraPoseTargetSpace().getPosition().x / DistanceUnit.mPerInch) + 8;
-                double z = (target.getCameraPoseTargetSpace().getPosition().z / DistanceUnit.mPerInch) + 8;
+                double x = (target.getCameraPoseTargetSpace().getPosition().x / DistanceUnit.mPerInch);
+                double z = (target.getCameraPoseTargetSpace().getPosition().z / DistanceUnit.mPerInch);
                 double dist = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
                 telemetry.addData("x, z, distance", x + " " + z + " " + dist);
 
@@ -285,6 +286,7 @@ public class Drive extends LinearOpMode {
     public static int i = 0;
     public static int d = 15; // 15
     public static int f = 0;
+    public static boolean dynamicVel = true;
     public static int vel = 1350; // 2100 for far; 1350 for near
     public static float intakeIntakePos = 0.35F;
     public static float intakeShootPos = 0.576F;
@@ -308,13 +310,11 @@ public class Drive extends LinearOpMode {
     private int spinState = 0;
 
     private Limelight3A limelight;
-    private final ElapsedTime limelightTimer = new ElapsedTime();
     private double distance = 60; // default value if limelight is completely busted
 
     private GoBildaPrismDriver ledStrip;
     PrismAnimations.Solid blueSolid = new PrismAnimations.Solid(Color.BLUE);
     PrismAnimations.Solid magentaSolid = new PrismAnimations.Solid(Color.MAGENTA);
     private PrismAnimations.Solid ledColor = blueSolid;
-
     boolean isSP = false;
 }
